@@ -3,6 +3,7 @@ package com.project.lay_note_was.lay_note.controller;
 import com.project.lay_note_was.lay_note.common.constant.ApiMappingPattern;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectCreateRequestDto;
+import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectImageRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectUpdateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectResponseDto;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(ApiMappingPattern.NOTE_PROJECT)
@@ -24,9 +26,11 @@ public class NoteProjectController {
     private final String GET_ONE = "/{noteProjectId}";
     private final String GET_BASKET = "/waste-basket";
     private final String CREATE = "/create";
-    private final String UPDATE = "/{noteProjectId}/update";
+    private final String UPDATE_TITLE = "/{noteProjectId}/update/title";
+    private final String UPDATE_IMAGE = "/{noteProjectId}/update/image";
     private final String DELETE = "/{noteProjectId}/delete";
     private final String DELETE_DATE = "/waste-basket/{noteProjectId}/deleteAt";
+    private final String DELETE_COMPLETE = "/{noteProjectId}/complete-delete";
 
     @GetMapping(GET_ALL)
     public ResponseEntity<ResponseDto<NoteProjectListResponseDto>> getNoteProjectAll (
@@ -61,23 +65,34 @@ public class NoteProjectController {
 
     @PostMapping(CREATE)
     public ResponseEntity<ResponseDto<NoteProjectResponseDto>> createNoteProject (
-            @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestBody NoteProjectCreateRequestDto dto
+            @AuthenticationPrincipal PrincipalUser principalUser
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteProjectResponseDto> response = noteProjectService.createNoteProject(userEmail, dto);
+        ResponseDto<NoteProjectResponseDto> response = noteProjectService.createNoteProject(userEmail);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
-    @PutMapping(UPDATE)
-    public ResponseEntity<ResponseDto<NoteProjectResponseDto>> upDateNoteProject (
+    @PutMapping(UPDATE_TITLE)
+    public ResponseEntity<ResponseDto<NoteProjectResponseDto>> updateNoteProjectTitle (
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable String noteProjectId,
             @RequestBody NoteProjectUpdateRequestDto dto
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteProjectResponseDto> response = noteProjectService.updateNoteProject(userEmail, noteProjectId, dto);
+        ResponseDto<NoteProjectResponseDto> response = noteProjectService.updateNoteProjectTitle(userEmail, noteProjectId, dto);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @PostMapping(UPDATE_IMAGE)
+    public ResponseEntity<ResponseDto<NoteProjectResponseDto>> upDateNoteProjectImage (
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @PathVariable String noteProjectId,
+            @RequestPart MultipartFile noteProjectImageUrl
+            ) {
+        String userEmail = principalUser.getUsername();
+        ResponseDto<NoteProjectResponseDto> response = noteProjectService.updateNoteProjectImage(userEmail, noteProjectId, noteProjectImageUrl);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -100,6 +115,17 @@ public class NoteProjectController {
     ) {
         String userEmail = principalUser.getUsername();
         ResponseDto<NoteProjectResponseDto> response = noteProjectService.deleteDeleteAt(userEmail, noteProjectId);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @DeleteMapping(DELETE_COMPLETE)
+    public ResponseEntity<ResponseDto<Void>> deleteNoteProject (
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @PathVariable String noteProjectId
+    ) {
+        String userEmail = principalUser.getUsername();
+        ResponseDto<Void> response = noteProjectService.deleteNoteProject(userEmail, noteProjectId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

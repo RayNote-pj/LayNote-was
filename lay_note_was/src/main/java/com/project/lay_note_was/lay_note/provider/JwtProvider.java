@@ -36,9 +36,9 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String generateJwtTokenByEmailId(String name, String userPhone) {
+    public String generateJwtTokenByEmailId(String userName, String userPhone) {
         return Jwts.builder()
-                .claim("name", name)
+                .claim("userName", userName)
                 .claim("userPhone", userPhone)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
@@ -65,6 +65,11 @@ public class JwtProvider {
     public String getUserEmailFromJwt (String token) {
         Claims claims = getClaims(token);
         return claims.get("userEmail", String.class);
+    }
+
+    public String getNameFromJwt (String token) {
+        Claims claims = getClaims(token);
+        return claims.get("userName", String.class);
     }
 
     public String getNickNameFromJwt(String token) {

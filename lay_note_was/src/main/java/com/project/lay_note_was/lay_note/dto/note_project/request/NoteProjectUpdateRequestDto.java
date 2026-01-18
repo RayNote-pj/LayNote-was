@@ -10,7 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NoteProjectUpdateRequestDto {
     @NotBlank
-    private String noteProjectImageUrl;
-    @NotBlank
     private String noteProjectTitle;
 }

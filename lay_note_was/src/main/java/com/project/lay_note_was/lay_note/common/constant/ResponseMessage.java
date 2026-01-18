@@ -36,6 +36,6 @@ public class ResponseMessage {
 
     public static final String NOTE_PROJECT_TRASH = "Move to Trash.";
     public static final String NOT_NOTE_PROJECT_MEMBER = "Not project member.";
-
-
+    public static final String ALREADY_NOTE_PROJECT_MEMBER = "Already note Project member";
+    public static final String ALREADY_REQUEST = "Already request";
 }
