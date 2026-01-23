@@ -20,4 +20,12 @@ public class NoteListDto {
         this.noteListTitle = list.getNoteListTitle();
         this.noteListItemDto = notes;
     }
+
+    public NoteListDto(NoteList noteList) {
+        this.noteListId = noteList.getNoteListId();
+        this.noteListTitle = noteList.getNoteListTitle();
+        this.noteListItemDto = noteList.getNoteListItems().stream()
+                .map(NoteListItemDto::new)
+                .toList();
+    }
 }

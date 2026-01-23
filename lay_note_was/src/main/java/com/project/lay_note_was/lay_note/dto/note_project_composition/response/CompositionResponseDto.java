@@ -48,50 +48,5 @@ public class CompositionResponseDto {
         this.compositionZ = noteProjectComposition.getCompositionZ();
         this.compositionZ2 = noteProjectComposition.getCompositionZ2();
     }
-
-    public CompositionResponseDto(NoteProjectComposition c, NoteList list) {
-        this.noteCompositionId = c.getNoteCompositionId();
-        this.noteProject = c.getNoteProject();
-        this.noteComponentId = c.getNoteComponentId();
-        this.noteComponentType = c.getNoteComponentType();
-        this.compositionWidth = c.getCompositionWidth();
-        this.compositionHeight = c.getCompositionHeight();
-        this.compositionX = c.getCompositionX();
-        this.compositionY = c.getCompositionY();
-        this.compositionZ = c.getCompositionZ();
-        this.compositionZ2 = c.getCompositionZ2();
-        this.noteList = new NoteListOneResponseDto(list);
-    }
-
-    public CompositionResponseDto(NoteProjectComposition c, NoteBox box) {
-        this.noteCompositionId = c.getNoteCompositionId();
-        this.noteProject = c.getNoteProject();
-        this.noteComponentId = c.getNoteComponentId();
-        this.noteComponentType = c.getNoteComponentType();
-        this.compositionWidth = c.getCompositionWidth();
-        this.compositionHeight = c.getCompositionHeight();
-        this.compositionX = c.getCompositionX();
-        this.compositionY = c.getCompositionY();
-        this.compositionZ = c.getCompositionZ();
-        this.compositionZ2 = c.getCompositionZ2();
-        this.noteBox = new NoteBoxResponseDto(new NoteBoxDto(box));
-    }
-
-    public CompositionResponseDto(NoteProjectComposition c, NoteImageBoxList imageBoxList) {
-        this.noteCompositionId = c.getNoteCompositionId();
-        this.noteProject = c.getNoteProject();
-        this.noteComponentId = c.getNoteComponentId();
-        this.noteComponentType = c.getNoteComponentType();
-        this.compositionWidth = c.getCompositionWidth();
-        this.compositionHeight = c.getCompositionHeight();
-        this.compositionX = c.getCompositionX();
-        this.compositionY = c.getCompositionY();
-        this.compositionZ = c.getCompositionZ();
-        this.compositionZ2 = c.getCompositionZ2();
-        this.noteImageBoxList = new NoteImageBoxListDto(imageBoxList.getNoteImageBoxListId(), imageBoxList.getNoteImageBoxes().stream()
-                .map(NoteImageBoxDto::new)
-                .toList()
-        );
-    }
 }
 

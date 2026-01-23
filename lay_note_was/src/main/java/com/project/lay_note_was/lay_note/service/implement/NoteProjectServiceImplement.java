@@ -9,8 +9,12 @@ import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectUpd
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
+import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
+import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUserId;
+import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
 import com.project.lay_note_was.lay_note.entity.user.User;
 import com.project.lay_note_was.lay_note.repository.NoteProjectRepository;
+import com.project.lay_note_was.lay_note.repository.NoteProjectUserRepository;
 import com.project.lay_note_was.lay_note.repository.UserRepository;
 import com.project.lay_note_was.lay_note.service.ImageService;
 import com.project.lay_note_was.lay_note.service.NoteProjectService;
@@ -26,6 +30,7 @@ import java.util.List;
 public class NoteProjectServiceImplement implements NoteProjectService {
 
     private final NoteProjectRepository noteProjectRepository;
+    private final NoteProjectUserRepository  noteProjectUserRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
 
@@ -89,13 +94,26 @@ public class NoteProjectServiceImplement implements NoteProjectService {
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_USER));
 
             NoteProject noteProject = NoteProject.builder()
-                    .noteProjectTitle("Untitle")
-                    .noteProjectImageUrl("111")
+                    .noteProjectTitle("Untitled")
+                    .noteProjectImageUrl("")
                     .user(user)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
             noteProjectRepository.save(noteProject);
+
+            NoteProjectUserId noteProjectUserId = NoteProjectUserId.builder()
+                    .userId(user.getUserId())
+                    .noteProjectId(noteProject.getNoteProjectId())
+                    .build();
+
+            NoteProjectUser noteProjectUser = NoteProjectUser.builder()
+                    .user(user)
+                    .id(noteProjectUserId)
+                    .noteProject(noteProject)
+                    .userRole(UserRole.OWNER)
+                    .build();
+            noteProjectUserRepository.save(noteProjectUser);
 
             NoteProjectDto response = new NoteProjectDto(noteProject);
             NoteProjectResponseDto data = new NoteProjectResponseDto(response);

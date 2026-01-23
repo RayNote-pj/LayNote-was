@@ -18,7 +18,7 @@ public class NoteListItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "note_list_items")
+    @Column(name = "note_list_item_id")
     private Long noteListItemId;
 
     @ManyToOne

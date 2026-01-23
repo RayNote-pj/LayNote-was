@@ -27,11 +27,10 @@ public class NoteListController {
     @PostMapping(POST)
     public ResponseEntity<ResponseDto<NoteListOneResponseDto>> crateNoteList (
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable String noteProjectId,
-            @RequestBody NoteListRequestDto dto
+            @PathVariable String noteProjectId
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteListOneResponseDto> response = noteListService.createNoteList(userEmail, dto, noteProjectId);
+        ResponseDto<NoteListOneResponseDto> response = noteListService.createNoteList(userEmail, noteProjectId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

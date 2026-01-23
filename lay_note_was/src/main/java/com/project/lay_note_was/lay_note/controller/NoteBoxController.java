@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(ApiMappingPattern.NOTE_BOX)
@@ -22,17 +23,17 @@ public class NoteBoxController {
 
     private final String POST = "/{noteProjectId}/create";
     private final String PUT = "/{noteProjectId}/update/{noteBoxId}";
+    private final String PUT_IMG = "/{noteProjectId}/update-img/{noteBoxId}";
     private final String DELETE = "/{noteProjectId}/delete/{noteBoxId}";
     private final String GET = "/{noteProjectId}/all";
 
     @PostMapping(POST)
     public ResponseEntity<ResponseDto<NoteBoxResponseDto>> createNoteBox (
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable String noteProjectId,
-            @RequestBody NoteBoxCreateRequestDto dto
+            @PathVariable String noteProjectId
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteBoxResponseDto> response = noteBoxService.createNoteBox(userEmail, noteProjectId, dto);
+        ResponseDto<NoteBoxResponseDto> response = noteBoxService.createNoteBox(userEmail, noteProjectId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
@@ -46,6 +47,19 @@ public class NoteBoxController {
     ) {
         String userEmail = principalUser.getUsername();
         ResponseDto<NoteBoxResponseDto> response = noteBoxService.updateNoteBox(userEmail, noteProjectId, dto, noteBoxId);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @PutMapping(PUT_IMG)
+    public ResponseEntity<ResponseDto<NoteBoxResponseDto>> updateNoteBoxImg (
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @PathVariable String noteProjectId,
+            @PathVariable Long noteBoxId,
+            @RequestPart MultipartFile imageUrl
+    ) {
+        String userEmail = principalUser.getUsername();
+        ResponseDto<NoteBoxResponseDto> response = noteBoxService.updateNoteBoxImg(userEmail, noteProjectId, imageUrl, noteBoxId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

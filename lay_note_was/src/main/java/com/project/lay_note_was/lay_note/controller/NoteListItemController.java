@@ -26,11 +26,10 @@ public class NoteListItemController {
     public ResponseEntity<ResponseDto<NoteListItemResponseDto>> createNoteListItem (
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable Long noteListId,
-            @PathVariable String noteProjectId,
-            @RequestBody NoteListItemRequestDto dto
+            @PathVariable String noteProjectId
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteListItemResponseDto> response = noteListItemService.createNoteListItem(userEmail, noteProjectId, noteListId, dto);
+        ResponseDto<NoteListItemResponseDto> response = noteListItemService.createNoteListItem(userEmail, noteProjectId, noteListId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

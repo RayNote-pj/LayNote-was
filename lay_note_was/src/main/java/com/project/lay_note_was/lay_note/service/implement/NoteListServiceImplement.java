@@ -8,6 +8,8 @@ import com.project.lay_note_was.lay_note.dto.note_list.request.NoteListRequestDt
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListOneResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
+import com.project.lay_note_was.lay_note.entity.note_list_item.NoteListItem;
+import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
@@ -27,10 +29,11 @@ public class NoteListServiceImplement implements NoteListService {
     private final NoteProjectUserRepository noteProjectUserRepository;
     private final NoteProjectCompositionRepository noteProjectCompositionRepository;
     private final NoteListItemRepository noteListItemRepository;
+    private final NoteProjectRepository noteProjectRepository;
 
     @Transactional
     @Override
-    public ResponseDto<NoteListOneResponseDto> createNoteList(String userEmail, NoteListRequestDto dto, String noteProjectId) {
+    public ResponseDto<NoteListOneResponseDto> createNoteList(String userEmail, String noteProjectId) {
         try {
             NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
@@ -38,15 +41,29 @@ public class NoteListServiceImplement implements NoteListService {
                 return ResponseDto.setFailed(ResponseMessage.NO_PERMISSION);
             }
             NoteList noteList = NoteList.builder()
-                    .noteListTitle(dto.getNoteListTitle())
+                    .noteListTitle("Untitled")
                     .build();
             noteListRepository.save(noteList);
+
+            NoteProject noteProject = noteProjectRepository.findById(noteProjectId)
+                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+
             NoteProjectComposition composition = NoteProjectComposition.builder()
-                    .noteProject(projectUser.getNoteProject())
+                    .compositionX(200)
+                    .compositionY(200)
+                    .compositionZ(1)
+                    .compositionWidth(200)
+                    .compositionHeight(300)
                     .noteComponentType(NoteComponentType.NOTELIST)
                     .noteComponentId(noteList.getNoteListId())
+                    .noteProject(noteProject)
                     .build();
             noteProjectCompositionRepository.save(composition);
+
+            NoteListItem item = NoteListItem.builder()
+                    .noteList(noteList)
+                    .build();
+            noteListItemRepository.save(item);
 
             NoteListOneResponseDto data = new NoteListOneResponseDto(noteList);
 

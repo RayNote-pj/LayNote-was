@@ -1,8 +1,11 @@
 package com.project.lay_note_was.lay_note.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -33,7 +36,9 @@ public class User {
     @Column(name = "user_phone", nullable = false)
     private String userPhone;
 
-    @Column(name = "profile_image_url", nullable = false)
+    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteProjectUser> noteProjectUsers;
 }

@@ -5,7 +5,7 @@ import com.project.lay_note_was.lay_note.dto.note_list.request.NoteListItemReque
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListItemResponseDto;
 
 public interface NoteListItemService {
-    ResponseDto<NoteListItemResponseDto> createNoteListItem(String userEmail, String noteProjectId, Long noteListId, NoteListItemRequestDto dto);
+    ResponseDto<NoteListItemResponseDto> createNoteListItem(String userEmail, String noteProjectId, Long noteListId);
 
     ResponseDto<NoteListItemResponseDto> updateNoteListItem(String userEmail, String noteProjectId, Long noteListId, Long noteListItemId, NoteListItemRequestDto dto);
 
