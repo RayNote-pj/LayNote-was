@@ -26,7 +26,8 @@ public class NoteProjectComposition {
     @Column(name = "note_component_id", nullable = false)
     private Long noteComponentId;
 
-    @Column(name = "note_component_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "note_component_type", length = 30)
     private NoteComponentType noteComponentType;
 
     @Column(name = "composition_width", nullable = false)

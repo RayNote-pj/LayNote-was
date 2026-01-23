@@ -7,11 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
-@Table(name = "note_lists")
+@Table(name = "note_list")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -24,6 +25,6 @@ public class NoteList {
     @Column(name = "note_list_title")
     private String noteListTitle;
 
-    @OneToMany(mappedBy = "noteList", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NoteListItem> noteListItems;
+    @OneToMany(mappedBy = "noteList", fetch = FetchType.LAZY)
+    private List<NoteListItem> noteListItems = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.project.lay_note_was.lay_note.dto.user.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.lay_note_was.lay_note.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class UserResponseDto {
     private String userName;
     private String nickName;
     private String userPhone;
+    @JsonProperty("profileImageUrl")
     private String profileImageUrl;
 
     public UserResponseDto(User user) {

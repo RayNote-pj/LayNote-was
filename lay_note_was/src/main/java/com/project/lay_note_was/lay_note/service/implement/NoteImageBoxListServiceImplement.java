@@ -40,17 +40,29 @@ public class NoteImageBoxListServiceImplement implements NoteImageBoxListService
             if(!(projectUser.getUserRole() == UserRole.OWNER || projectUser.getUserRole() == UserRole.MEMBER)) {
                 return ResponseDto.setFailed(ResponseMessage.NO_PERMISSION);
             }
-            NoteProject noteProject = noteProjectRepository.findByNoteProjectId(noteProjectId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+
             NoteImageBoxList noteImageBoxList = NoteImageBoxList.builder().build();
             noteImageBoxListRepository.save(noteImageBoxList);
 
+            NoteProject noteProject = noteProjectRepository.findById(noteProjectId)
+                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+
             NoteProjectComposition composition = NoteProjectComposition.builder()
-                    .noteProject(noteProject)
-                    .noteComponentId(noteImageBoxList.getNoteImageBoxListId())
+                    .compositionX(200)
+                    .compositionY(200)
+                    .compositionZ(1)
+                    .compositionWidth(200)
+                    .compositionHeight(300)
                     .noteComponentType(NoteComponentType.NOTEIMAGEBOX)
+                    .noteComponentId(noteImageBoxList.getNoteImageBoxListId())
+                    .noteProject(noteProject)
                     .build();
             noteProjectCompositionRepository.save(composition);
+
+            NoteImageBox box = NoteImageBox.builder()
+                    .noteImageBoxList(noteImageBoxList)
+                    .build();
+            noteImageBoxRepository.save(box);
 
             NoteImageBoxListOneResponseDto data = new NoteImageBoxListOneResponseDto(noteImageBoxList.getNoteImageBoxListId());
 

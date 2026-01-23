@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "note_image_boxs")
+@Table(name = "note_image_boxes")
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +25,6 @@ public class NoteImageBox {
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "note_image_box_List_id", nullable = false)
+    @JoinColumn(name = "note_image_box_list_id", nullable = false)
     private NoteImageBoxList noteImageBoxList;
 }

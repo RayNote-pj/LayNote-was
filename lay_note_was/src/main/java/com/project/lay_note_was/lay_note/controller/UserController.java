@@ -37,7 +37,7 @@ public class UserController {
     @PutMapping(ACCOUNT_PUT)
     public ResponseEntity<ResponseDto<UserResponseDto>> updateUserInfo (
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestBody UserUpdateRequestDto dto
+            @ModelAttribute UserUpdateRequestDto dto
     ) {
         String userEmail = principalUser.getUsername();
         ResponseDto<UserResponseDto> response = userService.updateMyAccount(userEmail, dto);

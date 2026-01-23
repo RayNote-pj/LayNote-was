@@ -7,7 +7,7 @@ import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListResponse
 
 public interface NoteListService {
 
-    ResponseDto<NoteListOneResponseDto> createNoteList(String userEmail, NoteListRequestDto dto, String noteProjectId);
+    ResponseDto<NoteListOneResponseDto> createNoteList(String userEmail, String noteProjectId);
 
     ResponseDto<NoteListResponseDto> getNoteList(String userEmail, String noteProjectId);
 

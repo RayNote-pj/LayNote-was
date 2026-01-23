@@ -8,6 +8,9 @@ import com.project.lay_note_was.lay_note.dto.note_image_box.request.NoteImageBox
 import com.project.lay_note_was.lay_note.dto.note_image_box.response.NoteImageBoxResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBox;
 import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBoxList;
+import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
 import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
 import com.project.lay_note_was.lay_note.repository.*;
@@ -21,6 +24,8 @@ public class NoteImageBoxServiceImplement implements NoteImageBoxService {
     private final NoteProjectUserRepository noteProjectUserRepository;
     private final NoteImageBoxListRepository noteImageBoxListRepository;
     private final NoteImageBoxRepository noteImageBoxRepository;
+    private final NoteProjectRepository noteProjectRepository;
+    private final NoteProjectCompositionRepository noteProjectCompositionRepository;
 
     @Override
     public ResponseDto<NoteImageBoxResponseDto> createImageBox(String userEmail, String noteProjectId, Long noteImageBoxListId, NoteImageBoxRequestDto dto) {

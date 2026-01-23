@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PinListResponseDto {
-    List<PinDto> pintDto;
+    private List<PinDto> pinDto;
 }

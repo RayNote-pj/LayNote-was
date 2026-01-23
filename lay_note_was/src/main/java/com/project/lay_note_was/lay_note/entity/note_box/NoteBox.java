@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "note_boxes")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class NoteBox {
 
     @Id

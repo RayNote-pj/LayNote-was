@@ -7,12 +7,12 @@ import com.project.lay_note_was.lay_note.dto.note_list.request.NoteListItemReque
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListItemResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
 import com.project.lay_note_was.lay_note.entity.note_list_item.NoteListItem;
+import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
 import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
-import com.project.lay_note_was.lay_note.repository.NoteListItemRepository;
-import com.project.lay_note_was.lay_note.repository.NoteListRepository;
-import com.project.lay_note_was.lay_note.repository.NoteProjectUserRepository;
+import com.project.lay_note_was.lay_note.repository.*;
 import com.project.lay_note_was.lay_note.service.NoteListItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,10 +24,12 @@ public class NoteListItemServiceImplement implements NoteListItemService {
     private final NoteListItemRepository noteListItemRepository;
     private final NoteProjectUserRepository noteProjectUserRepository;
     private final NoteListRepository noteListRepository;
+    private final NoteProjectRepository noteProjectRepository;
+    private final NoteProjectCompositionRepository noteProjectCompositionRepository;
 
     @Transactional
     @Override
-    public ResponseDto<NoteListItemResponseDto> createNoteListItem(String userEmail, String noteProjectId, Long noteListId, NoteListItemRequestDto dto) {
+    public ResponseDto<NoteListItemResponseDto> createNoteListItem(String userEmail, String noteProjectId, Long noteListId) {
         try {
             NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
@@ -37,11 +39,10 @@ public class NoteListItemServiceImplement implements NoteListItemService {
             NoteList noteList = noteListRepository.findByNoteListId(noteListId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteList"));
             NoteListItem noteListItem = NoteListItem.builder()
-                    .noteListContent(dto.getNoteListContent())
-                    .noteListCheck(dto.isNoteListCheck())
+                    .noteListContent("")
+                    .noteListCheck(false)
                     .noteList(noteList)
                     .build();
-
             NoteListItem saveNote = noteListItemRepository.save(noteListItem);
 
             NoteListItemDto response = new NoteListItemDto(saveNote);

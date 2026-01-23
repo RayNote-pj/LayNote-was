@@ -1,20 +1,16 @@
 package com.project.lay_note_was.lay_note.service.implement;
 
+import com.project.lay_note_was.lay_note.component.CompositionAssembler;
 import com.project.lay_note_was.lay_note.common.constant.ResponseMessage;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
+import com.project.lay_note_was.lay_note.dto.note_project_composition.CompositionDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.request.CompositionPositionRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.request.CompositionSizeRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.response.CompositionResponseDto;
-import com.project.lay_note_was.lay_note.entity.note_box.NoteBox;
-import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBoxList;
-import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
-import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
 import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
 import com.project.lay_note_was.lay_note.repository.*;
-import com.project.lay_note_was.lay_note.service.NoteImageBoxListService;
-import com.project.lay_note_was.lay_note.service.NoteListService;
 import com.project.lay_note_was.lay_note.service.NoteProjectCompositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,31 +26,18 @@ public class NoteProjectCompositionServiceImplement implements NoteProjectCompos
     private final NoteBoxRepository noteBoxRepository;
     private final NoteImageBoxRepository noteImageBoxRepository;
     private final NoteImageBoxListRepository noteImageBoxListRepository;
+    private final CompositionAssembler compositionAssembler;
 
     @Override
-    public ResponseDto<List<CompositionResponseDto>> getComposition(String userEmail, String noteProjectId) {
+    public ResponseDto<List<CompositionDto>> getComposition(String userEmail, String noteProjectId) {
         try {
-            List<NoteProjectComposition> composition = noteProjectCompositionRepository.findAllByNoteProject_User_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId);
+            List<NoteProjectComposition> compositions = noteProjectCompositionRepository.findAllByNoteProject_User_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId);
 
-            List<CompositionResponseDto> data =  composition.stream()
-                    .map(c -> {
-                        switch (c.getNoteComponentType()) {
-                            case NOTELIST -> {
-                                NoteList list = noteListRepository.findById(c.getNoteComponentId()).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA));
-                                return new CompositionResponseDto(c, list);
-                            }
-                            case NOTEBOX -> {
-                                NoteBox box = noteBoxRepository.findById(c.getNoteComponentId()).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA));
-                                return new CompositionResponseDto(c, box);
-                            }
-                            case NOTEIMAGEBOX -> {
-                                NoteImageBoxList imageBoxList = noteImageBoxListRepository.findById(c.getNoteComponentId()).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA));
-                                return new CompositionResponseDto(c, imageBoxList);
-                            }
-                            default -> throw new IllegalArgumentException("알 수 없는 타입");
-                        }
-                    })
-                    .toList();
+            List<CompositionDto> data =
+                    compositions.stream()
+                            .map(CompositionDto::new)
+                            .map(compositionAssembler::assemble)
+                            .toList();
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (IllegalArgumentException e) {

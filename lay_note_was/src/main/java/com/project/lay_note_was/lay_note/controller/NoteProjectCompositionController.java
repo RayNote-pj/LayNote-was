@@ -2,6 +2,7 @@ package com.project.lay_note_was.lay_note.controller;
 
 import com.project.lay_note_was.lay_note.common.constant.ApiMappingPattern;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
+import com.project.lay_note_was.lay_note.dto.note_project_composition.CompositionDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.request.CompositionPositionRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.request.CompositionSizeRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.response.CompositionResponseDto;
@@ -26,12 +27,12 @@ public class NoteProjectCompositionController {
     private final String PUT_POSITION = "/{noteCompositionId}/{noteProjectId}/{noteComponentId}/position";
 
     @GetMapping(GET)
-    public ResponseEntity<ResponseDto<List<CompositionResponseDto>>> getComposition (
+    public ResponseEntity<ResponseDto<List<CompositionDto>>> getComposition (
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable String noteProjectId
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<List<CompositionResponseDto>> response = noteProjectCompositionService.getComposition(userEmail, noteProjectId);
+        ResponseDto<List<CompositionDto>> response = noteProjectCompositionService.getComposition(userEmail, noteProjectId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
