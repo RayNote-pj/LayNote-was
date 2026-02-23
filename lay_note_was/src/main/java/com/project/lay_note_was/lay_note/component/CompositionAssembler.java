@@ -4,53 +4,50 @@ import com.project.lay_note_was.lay_note.dto.note_box.NoteBoxDto;
 import com.project.lay_note_was.lay_note.dto.note_image_box.NoteImageBoxListDto;
 import com.project.lay_note_was.lay_note.dto.note_list.NoteListDto;
 import com.project.lay_note_was.lay_note.dto.note_project_composition.CompositionDto;
-import com.project.lay_note_was.lay_note.repository.NoteBoxRepository;
-import com.project.lay_note_was.lay_note.repository.NoteImageBoxListRepository;
-import com.project.lay_note_was.lay_note.repository.NoteListRepository;
+import com.project.lay_note_was.lay_note.entity.note_box.NoteBox;
+import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBoxList;
+import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
+
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CompositionAssembler {
-    private final NoteBoxRepository noteBoxRepository;
-    private final NoteListRepository noteListRepository;
-    private final NoteImageBoxListRepository noteImageBoxListRepository;
 
-    public CompositionDto assemble(CompositionDto composition) {
+    public CompositionDto assemble(
+            NoteProjectComposition composition
+    ) {
         CompositionDto dto =
                 new CompositionDto(composition);
-        System.out.println(
-                "[ASSEMBLE] compositionId=" + composition.getNoteCompositionId()
-                        + ", type=" + composition.getNoteComponentType()
-                        + ", componentId=" + composition.getNoteComponentId()
-        );
+        ;
 
         switch (composition.getNoteComponentType()) {
+
             case NOTEBOX -> {
-                System.out.println("[ASSEMBLE] NOTEBOX");
-                noteBoxRepository.findById(composition.getNoteComponentId())
-                        .ifPresent(noteBox ->
-                                dto.setNoteBox(new NoteBoxDto(noteBox))
-                        );
+                NoteBox noteBox = composition.getNoteBox();
+
+                if (noteBox != null) {
+                    dto.setNoteBox(new NoteBoxDto(noteBox));
+                }
             }
 
             case NOTELIST -> {
-                System.out.println("[ASSEMBLE] NOTELIST");
-                noteListRepository.findById(composition.getNoteComponentId())
-                        .ifPresent(noteList ->
-                                dto.setNoteList(new NoteListDto(noteList))
-                        );
+                NoteList noteList = composition.getNoteList();
+
+                if (noteList != null) {
+                    dto.setNoteList(new NoteListDto(noteList));
+                }
             }
 
             case NOTEIMAGEBOX -> {
-                System.out.println("[ASSEMBLE] NOTEIMAGEBOX");
-                noteImageBoxListRepository.findById(composition.getNoteComponentId())
-                        .ifPresent(list ->
-                                dto.setNoteImageBoxList(
-                                        new NoteImageBoxListDto(list)
-                                )
-                        );
+                NoteImageBoxList noteImageBoxList = (composition.getNoteImageBoxList());
+
+                if (noteImageBoxList != null) {
+                    dto.setNoteImageBoxList(new NoteImageBoxListDto(noteImageBoxList));
+                }
             }
         }
 

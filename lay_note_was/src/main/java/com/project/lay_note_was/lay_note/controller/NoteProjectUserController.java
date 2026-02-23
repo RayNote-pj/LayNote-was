@@ -20,6 +20,7 @@ public class NoteProjectUserController {
     private final NoteProjectUserService noteProjectUserService;
 
     private final String GET = "/user-list/{noteProjectId}";
+    private final String GET_CHECK_MEMBER = "/check-member/{noteProjectId}";
     private final String PUT = "/authority-change/{noteProjectId}";
 
     @GetMapping(GET)
@@ -29,6 +30,17 @@ public class NoteProjectUserController {
     ) {
         String userEmail = principalUser.getUsername();
         ResponseDto<NoteProjectUserListResponseDto> response = noteProjectUserService.getProjectJoinUser(userEmail, noteProjectId);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping(GET_CHECK_MEMBER)
+    public ResponseEntity<ResponseDto<Boolean>> isMember (
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @PathVariable String noteProjectId
+    ){
+        String userEmail = principalUser.getUsername();
+        ResponseDto<Boolean> response = noteProjectUserService.isMember(userEmail, noteProjectId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

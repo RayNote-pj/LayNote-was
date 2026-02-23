@@ -11,11 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NoteProjectUserDto {
     private String userEmail;
-    private String noteProjectId;
     private UserRole userRole;
 
     public NoteProjectUserDto(NoteProjectUser noteProjectUser) {
-        this.noteProjectId = noteProjectUser.getNoteProject().getNoteProjectId();
         this.userEmail = noteProjectUser.getUser().getUserEmail();
         this.userRole = noteProjectUser.getUserRole();
     }

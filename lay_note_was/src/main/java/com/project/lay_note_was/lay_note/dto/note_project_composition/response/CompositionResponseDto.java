@@ -1,14 +1,9 @@
 package com.project.lay_note_was.lay_note.dto.note_project_composition.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.lay_note_was.lay_note.dto.note_box.NoteBoxDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxResponseDto;
-import com.project.lay_note_was.lay_note.dto.note_image_box.NoteImageBoxDto;
 import com.project.lay_note_was.lay_note.dto.note_image_box.NoteImageBoxListDto;
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListOneResponseDto;
-import com.project.lay_note_was.lay_note.entity.note_box.NoteBox;
-import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBoxList;
-import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
 import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
@@ -23,15 +18,11 @@ public class CompositionResponseDto {
     private String noteCompositionId;
     @JsonIgnore
     private NoteProject noteProject;
-    private Long noteComponentId;
     private NoteComponentType noteComponentType;
-    private int compositionWidth;
-    private int compositionHeight;
     private int compositionX;
     private int compositionY;
     private int compositionZ;
     private int compositionZ2;
-
     private NoteBoxResponseDto noteBox;
     private NoteListOneResponseDto noteList;
     private NoteImageBoxListDto noteImageBoxList;
@@ -39,10 +30,7 @@ public class CompositionResponseDto {
     public CompositionResponseDto(NoteProjectComposition noteProjectComposition) {
         this.noteCompositionId = noteProjectComposition.getNoteCompositionId();
         this.noteProject = noteProjectComposition.getNoteProject();
-        this.noteComponentId = noteProjectComposition.getNoteComponentId();
         this.noteComponentType = noteProjectComposition.getNoteComponentType();
-        this.compositionWidth = noteProjectComposition.getCompositionWidth();
-        this.compositionHeight = noteProjectComposition.getCompositionHeight();
         this.compositionX = noteProjectComposition.getCompositionX();
         this.compositionY = noteProjectComposition.getCompositionY();
         this.compositionZ = noteProjectComposition.getCompositionZ();

@@ -19,7 +19,8 @@ public class NoteListItemController {
     private final NoteListItemService noteListItemService;
 
     private final String POST = "/{noteProjectId}/create/{noteListId}";
-    private final String PUT = "/{noteProjectId}/{noteListId}/update/{noteListItemId}";
+    private final String PUT = "/{noteProjectId}/update/{noteListItemId}";
+    private final String CHECK_PUT = "/{noteProjectId}/check/{noteListItemId}";
     private final String DELETE = "/{noteProjectId}/delete/{noteListItemId}";
 
     @PostMapping(POST)
@@ -34,16 +35,28 @@ public class NoteListItemController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @PutMapping(CHECK_PUT)
+    public ResponseEntity<ResponseDto<NoteListItemResponseDto>> updateCheck (
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @PathVariable Long noteListItemId,
+            @PathVariable String noteProjectId,
+            @RequestParam Boolean noteListCheck
+    ) {
+        String userEmail = principalUser.getUsername();
+        ResponseDto<NoteListItemResponseDto> response = noteListItemService.updateCheck(userEmail, noteProjectId, noteListItemId, noteListCheck);
+        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @PutMapping(PUT)
     public ResponseEntity<ResponseDto<NoteListItemResponseDto>> updateNoteListItem (
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @PathVariable Long noteListId,
             @PathVariable Long noteListItemId,
             @PathVariable String noteProjectId,
             @RequestBody NoteListItemRequestDto dto
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteListItemResponseDto> response = noteListItemService.updateNoteListItem(userEmail, noteProjectId, noteListId, noteListItemId, dto);
+        ResponseDto<NoteListItemResponseDto> response = noteListItemService.updateNoteListItem(userEmail, noteProjectId, noteListItemId, dto);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

@@ -5,18 +5,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface NoteBoxRepository extends JpaRepository<NoteBox, Long> {
-
     @Query("""
     SELECT nb
     FROM NoteBox nb
-    JOIN NoteProjectComposition npj
-    JOIN User u
-    Where nb.noteBoxId = npj.noteComponentId
-    AND npj.noteComponentType = "NOTEBOX"
-    AND u.userEmail = :userEmail
+    JOIN nb.noteProjectCompositions npj
+    JOIN npj.noteProject np
+    JOIN np.noteProjectUsers npu
+    WHERE nb.noteBoxId = :noteBoxId
+    AND npu.user.userEmail= :userEmail
 """)
-    NoteBox findNoteBox(String userEmail, Long noteBoxId);
+    Optional<NoteBox> findByNoteBoxIdAndNoteUserEmail(Long noteBoxId, String userEmail);
 }
 

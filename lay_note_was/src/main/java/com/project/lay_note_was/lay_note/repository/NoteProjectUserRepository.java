@@ -17,8 +17,7 @@ public interface NoteProjectUserRepository extends JpaRepository<NoteProjectUser
 
     Optional<NoteProjectUser> findByUserAndNoteProject(User user, NoteProject noteProject);
 
-    Optional<NoteProjectUser> findByUser_UserEmail(String userEmail);
-
     Optional<NoteProjectUser> findByUser_UserEmailAndNoteProject_NoteProjectId(String userEmail, String noteProjectId);
 
+    boolean existsByUser_UserEmailAndNoteProject_NoteProjectId(String userEmail, String noteProjectId);
 }

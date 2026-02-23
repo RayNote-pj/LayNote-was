@@ -38,4 +38,5 @@ public class ResponseMessage {
     public static final String NOT_NOTE_PROJECT_MEMBER = "Not project member.";
     public static final String ALREADY_NOTE_PROJECT_MEMBER = "Already note Project member";
     public static final String ALREADY_REQUEST = "Already request";
+    public static final String ONLY_OWNER = "Only the owner can change it";
 }

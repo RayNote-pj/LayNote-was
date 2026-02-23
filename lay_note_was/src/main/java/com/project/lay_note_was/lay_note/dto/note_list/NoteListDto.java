@@ -15,11 +15,6 @@ public class NoteListDto {
     private String noteListTitle;
     private List<NoteListItemDto> noteListItemDto;
 
-    public NoteListDto(NoteList list, List<NoteListItemDto> notes) {
-        this.noteListId = list.getNoteListId();
-        this.noteListTitle = list.getNoteListTitle();
-        this.noteListItemDto = notes;
-    }
 
     public NoteListDto(NoteList noteList) {
         this.noteListId = noteList.getNoteListId();

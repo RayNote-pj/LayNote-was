@@ -1,10 +1,13 @@
 package com.project.lay_note_was.lay_note.entity.note_box;
 
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -27,4 +30,7 @@ public class NoteBox {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @OneToMany(mappedBy = "noteBox", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteProjectComposition> noteProjectCompositions;
 }

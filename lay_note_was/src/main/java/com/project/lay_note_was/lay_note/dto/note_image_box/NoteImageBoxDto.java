@@ -13,12 +13,10 @@ public class NoteImageBoxDto {
     private Long noteImageBoxId;
     private String imageCaption;
     private String imageUrl;
-    private NoteImageBoxList noteImageBoxList;
 
     public NoteImageBoxDto(NoteImageBox noteImageBox) {
         this.noteImageBoxId = noteImageBox.getNoteImageBoxId();
         this.imageCaption = noteImageBox.getImageCaption();
         this.imageUrl = noteImageBox.getImageUrl();
-        this.noteImageBoxList = noteImageBox.getNoteImageBoxList();
     }
 }

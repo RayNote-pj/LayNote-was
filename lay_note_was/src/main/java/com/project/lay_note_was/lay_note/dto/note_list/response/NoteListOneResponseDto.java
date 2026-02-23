@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NoteListOneResponseDto {
     private Long noteListId;
-    private String noteListTitle;
 
     public NoteListOneResponseDto(NoteList noteList) {
         this.noteListId = noteList.getNoteListId();
-        this.noteListTitle = noteList.getNoteListTitle();
     }
 }

@@ -8,16 +8,15 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class NoteImageBoxListDto {
     private Long noteImageBoxListId;
     private List<NoteImageBoxDto> noteImageBoxDto;
 
-    public NoteImageBoxListDto(NoteImageBoxList list) {
-        this.noteImageBoxListId = list.getNoteImageBoxListId();
-        this.noteImageBoxDto= list.getNoteImageBoxes()
-                .stream()
+    public NoteImageBoxListDto(NoteImageBoxList noteImageBoxList) {
+        this.noteImageBoxListId = noteImageBoxList.getNoteImageBoxListId();
+        this.noteImageBoxDto = noteImageBoxList.getNoteImageBoxes().stream()
                 .map(NoteImageBoxDto::new)
                 .toList();
     }

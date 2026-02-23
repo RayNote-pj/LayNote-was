@@ -1,6 +1,7 @@
 package com.project.lay_note_was.lay_note.entity.note_list;
 
 import com.project.lay_note_was.lay_note.entity.note_list_item.NoteListItem;
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,9 @@ public class NoteList {
     @Column(name = "note_list_title")
     private String noteListTitle;
 
-    @OneToMany(mappedBy = "noteList", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "noteList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NoteListItem> noteListItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "noteList", fetch = FetchType.LAZY)
+    private List<NoteProjectComposition> noteProjectCompositions;
 }

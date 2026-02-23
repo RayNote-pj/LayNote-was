@@ -13,10 +13,6 @@ public class CompositionRequestDto {
     @NotNull
     private NoteComponentType noteComponentType;
     @NotNull
-    private int  compositionWidth;
-    @NotNull
-    private int  compositionHeight;
-    @NotNull
     private int  compositionX;
     @NotNull
     private int  compositionY;

@@ -23,5 +23,7 @@ public class SignUpRequestDto {
     @NotBlank(message = "사용자 전화번호는 필수입니다.")
     private String userPhone;
     private String profileImageUrl;
+    private String snsId;
+    private String joinPath;
 
 }

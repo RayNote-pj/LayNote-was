@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class NoteProjectJoin {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "note_project_join_id", columnDefinition = "CHAR(36)")
+    @Column(name = "project_join_id", columnDefinition = "CHAR(36)")
     private String noteProjectJoinId;
 
     @ManyToOne
@@ -27,7 +27,7 @@ public class NoteProjectJoin {
     private NoteProject noteProject;
 
     @ManyToOne
-    @JoinColumn(name = "note_project_owner_id", columnDefinition = "CHAR(36)")
+    @JoinColumn(name = "user_id", columnDefinition = "CHAR(36)")
     private User user;
 
     @Enumerated(EnumType.STRING)

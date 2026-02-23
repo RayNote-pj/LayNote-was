@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class NoteBoxUpdateRequestDto {
     private String noteBoxTitle;
     private String noteBoxContent;
-    private String imageUrl;
 }

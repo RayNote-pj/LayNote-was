@@ -1,5 +1,6 @@
 package com.project.lay_note_was.lay_note.repository;
 
+import com.project.lay_note_was.lay_note.dto.note_project_composition.CompositionDto;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,22 +16,30 @@ public interface NoteProjectCompositionRepository extends JpaRepository<NoteProj
 
     @Query("""
     SELECT c FROM NoteProjectComposition c
-    WHERE c.noteComponentType = :noteComponentType AND c.noteComponentId = :noteListId
+    JOIN c.noteProject np
+    JOIN np.noteProjectUsers npu
+    WHERE c.noteCompositionId = :noteCompositionId
+    AND npu.user.userEmail = :userEmail
 """)
-    Optional<NoteProjectComposition> findByComponentTypeAndTargetId(@Param("noteComponentType") NoteComponentType noteComponentType, @Param("noteListId") Long targetId);
+    NoteProjectComposition findByNoteCompositionId(String noteCompositionId, String userEmail);
 
     @Query("""
-    SELECT c FROM NoteProjectComposition c
-    WHERE c.noteComponentType = :noteComponentType 
-    AND c.noteComponentId = :noteListId
-    AND c.noteProject.noteProjectId = :noteProjectId
+    SELECT npc
+    FROM NoteProjectComposition  npc
+    JOIN FETCH npc.noteProject np
+    JOIN FETCH np.user
+    LEFT JOIN FETCH npc.noteBox nb
+    LEFT JOIN FETCH npc.noteList nl
+    LEFT JOIN FETCH nl.noteListItems
+    LEFT JOIN FETCH npc.noteImageBoxList nibl
+    WHERE np.noteProjectId = :noteProjectId
 """)
-    Optional<NoteProjectComposition> findByComponentTypeAndTargetIdAndNoteProject_noteProjectId(
-            @Param("noteComponentType") NoteComponentType noteComponentType,
-            @Param("noteListId") Long noteListId,
-            @Param("noteProjectId") String noteProjectId);
+    List<NoteProjectComposition> findAllByNoteProject_NoteProjectIdWithFetch(@Param("noteProjectId") String noteProjectId);
 
-    List<NoteProjectComposition> findAllByNoteProject_User_UserEmailAndNoteProject_NoteProjectId(String userEmail, String noteProjectId);
+    Optional<NoteProjectComposition> findByNoteProject_NoteProjectIdAndNoteBox_NoteBoxIdAndNoteComponentType(String noteProject_noteProjectId, Long noteBoxId, NoteComponentType noteComponentType);
 
-    NoteProjectComposition findByNoteCompositionIdAndNoteComponentId(String noteCompositionId, Long noteComponentId);
+    Optional<NoteProjectComposition> findByNoteProject_NoteProjectIdAndNoteImageBoxList_NoteImageBoxListIdAndNoteComponentType(String noteProject_noteProjectId, Long noteImageBoxListId, NoteComponentType noteComponentType);
+
+    Optional<NoteProjectComposition> findByNoteProject_NoteProjectIdAndNoteList_NoteListIdAndNoteComponentType(String noteProject_noteProjectId, Long noteListId, NoteComponentType noteComponentType);
+
 }

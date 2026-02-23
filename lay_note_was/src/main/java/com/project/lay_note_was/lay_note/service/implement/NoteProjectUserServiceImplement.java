@@ -58,6 +58,10 @@ public class NoteProjectUserServiceImplement implements NoteProjectUserService {
             NoteProjectUser noteProjectUser = noteProjectUserRepository.findByUserAndNoteProject(user, noteProject)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProjectUser"));
 
+            if (noteProjectUser.getUserRole() != UserRole.OWNER) {
+                return ResponseDto.setFailed(ResponseMessage.ONLY_OWNER);
+            }
+
             noteProjectUser.setUserRole(userRole);
             noteProjectUserRepository.save(noteProjectUser);
 
@@ -70,5 +74,25 @@ public class NoteProjectUserServiceImplement implements NoteProjectUserService {
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
 
+    }
+
+    @Override
+    public ResponseDto<Boolean> isMember(String userEmail, String noteProjectId) {
+        try {
+            boolean projectUser = noteProjectUserRepository
+                    .existsByUser_UserEmailAndNoteProject_NoteProjectId(
+                            userEmail,
+                            noteProjectId
+                    );
+
+            if (!projectUser) {
+                return ResponseDto.setSuccess(ResponseMessage.SUCCESS, false);
+            }
+
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
     }
 }

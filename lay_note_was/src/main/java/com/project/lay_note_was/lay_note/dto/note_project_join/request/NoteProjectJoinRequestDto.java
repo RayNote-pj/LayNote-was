@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NoteProjectJoinRequestDto {
     private String userEmail;
-    private JoinStatus joinStatus;
 }
