@@ -10,13 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProjectPermissionChecker  {
+
     private final NoteProjectUserRepository noteProjectUserRepository;
 
-    public void requireMemberOrOwner (String userEmail, String noteProjectId) {
+    public NoteProjectUser requireMemberOrOwner (String userEmail, String noteProjectId) {
         NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
                 .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
-        if(!(projectUser.getUserRole() == UserRole.OWNER || projectUser.getUserRole() == UserRole.MEMBER)) {
+        if (projectUser.getUserRole() != UserRole.OWNER &&
+                projectUser.getUserRole() != UserRole.MEMBER) {
             throw new IllegalArgumentException(ResponseMessage.NO_PERMISSION);
         }
+
+        return projectUser;
     }
 }

@@ -2,10 +2,10 @@ package com.project.lay_note_was.lay_note.controller;
 
 import com.project.lay_note_was.lay_note.common.constant.ApiMappingPattern;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
-import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxCreateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxUpdateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxResponseDto;
+import com.project.lay_note_was.lay_note.dto.note_box.response.NoteUpdateResponseDto;
 import com.project.lay_note_was.lay_note.security.PrincipalUser;
 import com.project.lay_note_was.lay_note.service.NoteBoxService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class NoteBoxController {
 
     private final String POST = "/{noteProjectId}/create";
     private final String PUT = "/{noteProjectId}/update/{noteBoxId}";
-    private final String PUT_IMG = "/{noteProjectId}/update-img/{noteBoxId}";
+    private final String POST_IMG = "/{noteProjectId}/update-img/{noteBoxId}";
     private final String DELETE = "/{noteProjectId}/delete/{noteBoxId}";
     private final String GET = "/{noteProjectId}/all";
 
@@ -39,19 +39,19 @@ public class NoteBoxController {
     }
 
     @PutMapping(PUT)
-    public ResponseEntity<ResponseDto<NoteBoxResponseDto>> updateNoteBox (
+    public ResponseEntity<ResponseDto<NoteUpdateResponseDto>> updateNoteBox (
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable String noteProjectId,
             @RequestBody NoteBoxUpdateRequestDto dto,
             @PathVariable Long noteBoxId
     ) {
         String userEmail = principalUser.getUsername();
-        ResponseDto<NoteBoxResponseDto> response = noteBoxService.updateNoteBox(userEmail, noteProjectId, dto, noteBoxId);
+        ResponseDto<NoteUpdateResponseDto> response = noteBoxService.updateNoteBox(userEmail, noteProjectId, dto, noteBoxId);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }
 
-    @PutMapping(PUT_IMG)
+    @PostMapping(POST_IMG)
     public ResponseEntity<ResponseDto<NoteBoxResponseDto>> updateNoteBoxImg (
             @AuthenticationPrincipal PrincipalUser principalUser,
             @PathVariable String noteProjectId,

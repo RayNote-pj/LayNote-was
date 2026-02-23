@@ -25,6 +25,6 @@ public class NoteImageBox {
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "note_image_box_list_id", nullable = false)
+    @JoinColumn(name = "note_image_box_list_Id", nullable = false)
     private NoteImageBoxList noteImageBoxList;
 }

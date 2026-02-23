@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface NoteProjectRepository extends JpaRepository<NoteProject, String> {
     @Query(value = """
     SELECT np FROM NoteProject np
+    JOIN FETCH np.user
     WHERE np.user.userEmail = :userEmail
     AND np.deletedAt IS NULL
     ORDER BY np.updatedAt DESC

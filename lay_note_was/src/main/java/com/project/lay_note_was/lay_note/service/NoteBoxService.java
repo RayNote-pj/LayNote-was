@@ -5,12 +5,13 @@ import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxCreateReque
 import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxUpdateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxResponseDto;
+import com.project.lay_note_was.lay_note.dto.note_box.response.NoteUpdateResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface NoteBoxService {
     ResponseDto<NoteBoxResponseDto> createNoteBox(String userEmail, String noteProjectId);
 
-    ResponseDto<NoteBoxResponseDto> updateNoteBox(String userEmail, String noteProjectId, NoteBoxUpdateRequestDto dto, Long noteBoxId);
+    ResponseDto<NoteUpdateResponseDto> updateNoteBox(String userEmail, String noteProjectId, NoteBoxUpdateRequestDto dto, Long noteBoxId);
 
     ResponseDto<NoteBoxListResponseDto> getNoteBox(String userEmail, String noteProjectId);
 

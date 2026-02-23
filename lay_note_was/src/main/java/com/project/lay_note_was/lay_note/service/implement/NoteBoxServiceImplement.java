@@ -4,24 +4,22 @@ import com.project.lay_note_was.lay_note.common.constant.ResponseMessage;
 import com.project.lay_note_was.lay_note.component.ProjectPermissionChecker;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_box.NoteBoxDto;
-import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxCreateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_box.request.NoteBoxUpdateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_box.response.NoteBoxResponseDto;
+import com.project.lay_note_was.lay_note.dto.note_box.response.NoteUpdateResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_box.NoteBox;
 import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
 import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
-import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
-import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
 import com.project.lay_note_was.lay_note.repository.NoteBoxRepository;
 import com.project.lay_note_was.lay_note.repository.NoteProjectCompositionRepository;
 import com.project.lay_note_was.lay_note.repository.NoteProjectRepository;
-import com.project.lay_note_was.lay_note.repository.NoteProjectUserRepository;
 import com.project.lay_note_was.lay_note.service.ImageService;
 import com.project.lay_note_was.lay_note.service.NoteBoxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -45,7 +43,7 @@ public class NoteBoxServiceImplement implements NoteBoxService {
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
 
             NoteBox noteBox = NoteBox.builder()
-                    .noteBoxTitle("Untitled")
+                    .noteBoxTitle("Not_Box")
                     .noteBoxContent("")
                     .imageUrl(null)
                     .build();
@@ -54,10 +52,8 @@ public class NoteBoxServiceImplement implements NoteBoxService {
                     .compositionX(200)
                     .compositionY(200)
                     .compositionZ(1)
-                    .compositionWidth(350)
-                    .compositionHeight(400)
                     .noteComponentType(NoteComponentType.NOTEBOX)
-                    .noteComponentId(noteBox.getNoteBoxId())
+                    .noteBox(noteBox)
                     .noteProject(noteProject)
                     .build();
             noteProjectCompositionRepository.save(composition);
@@ -74,19 +70,23 @@ public class NoteBoxServiceImplement implements NoteBoxService {
     }
 
     @Override
-    public ResponseDto<NoteBoxResponseDto> updateNoteBox(String userEmail, String noteProjectId, NoteBoxUpdateRequestDto dto, Long noteBoxId) {
+    @Transactional
+    public ResponseDto<NoteUpdateResponseDto> updateNoteBox(String userEmail, String noteProjectId, NoteBoxUpdateRequestDto dto, Long noteBoxId) {
         try {
             projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
 
-            NoteBox noteBox = noteBoxRepository.findById(noteBoxId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteBox"));
+            NoteBox noteBox = noteBoxRepository.findByNoteBoxIdAndNoteUserEmail(noteBoxId, userEmail)
+                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "notebox"));
 
-            noteBox.setNoteBoxTitle(dto.getNoteBoxTitle());
-            noteBox.setNoteBoxContent(dto.getNoteBoxContent());
-            noteBox.setImageUrl(dto.getImageUrl());
 
-            NoteBoxDto response = new NoteBoxDto(noteBox);
-            NoteBoxResponseDto data = new NoteBoxResponseDto(response);
+            if (dto.getNoteBoxTitle() != null) {
+                noteBox.setNoteBoxTitle(dto.getNoteBoxTitle());
+            }
+            if (dto.getNoteBoxContent() != null) {
+                noteBox.setNoteBoxContent(dto.getNoteBoxContent());
+            }
+
+            NoteUpdateResponseDto data = new NoteUpdateResponseDto(noteBox.getNoteBoxId());
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (IllegalArgumentException e) {
@@ -122,9 +122,11 @@ public class NoteBoxServiceImplement implements NoteBoxService {
     public ResponseDto<Void> deleteNoteBox(String userEmail, String noteProjectId, Long noteBoxId) {
         try {
             projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
-            NoteProjectComposition composition = noteProjectCompositionRepository.findByComponentTypeAndTargetIdAndNoteProject_noteProjectId(NoteComponentType.NOTELIST, noteBoxId, noteProjectId).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProjectComposition"));
 
-            NoteBox noteBox = noteBoxRepository.findById(noteBoxId)
+            NoteProjectComposition composition = noteProjectCompositionRepository.findByNoteProject_NoteProjectIdAndNoteBox_NoteBoxIdAndNoteComponentType(noteProjectId, noteBoxId, NoteComponentType.NOTEBOX )
+                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProjectComposition"));
+
+            NoteBox noteBox = noteBoxRepository.findByNoteBoxIdAndNoteUserEmail(noteBoxId, userEmail)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteBox"));
 
             noteProjectCompositionRepository.delete(composition);
@@ -139,19 +141,20 @@ public class NoteBoxServiceImplement implements NoteBoxService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<NoteBoxResponseDto> updateNoteBoxImg(String userEmail, String noteProjectId, MultipartFile imageUrl, Long noteBoxId) {
         try {
             projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
+
             String noteBoxImgPath = null;
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 noteBoxImgPath = imageService.convertImgFile(imageUrl, "note-box-image");
             }
-            NoteBox noteBox = noteBoxRepository.findNoteBox(userEmail, noteBoxId);
 
-            NoteBox note = noteBox.toBuilder()
-                    .imageUrl(noteBoxImgPath)
-                    .build();
-            NoteBoxDto dto = new NoteBoxDto(note);
+            NoteBox noteBox = noteBoxRepository.findByNoteBoxIdAndNoteUserEmail(noteBoxId, userEmail).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA));
+
+            noteBox.setImageUrl(noteBoxImgPath);
+            NoteBoxDto dto = new NoteBoxDto(noteBox);
             NoteBoxResponseDto data = new NoteBoxResponseDto(dto);
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);

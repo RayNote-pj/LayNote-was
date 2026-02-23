@@ -1,5 +1,8 @@
 package com.project.lay_note_was.lay_note.entity.note_project_composition;
 
+import com.project.lay_note_was.lay_note.entity.note_box.NoteBox;
+import com.project.lay_note_was.lay_note.entity.note_image_box.NoteImageBoxList;
+import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
 import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,18 +26,9 @@ public class NoteProjectComposition {
     @JoinColumn(name = "note_project_id", columnDefinition = "CHAR(36)")
     private NoteProject noteProject;
 
-    @Column(name = "note_component_id", nullable = false)
-    private Long noteComponentId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "note_component_type", length = 30)
     private NoteComponentType noteComponentType;
-
-    @Column(name = "composition_width", nullable = false)
-    private int  compositionWidth;
-
-     @Column(name = "composition_height", nullable = false)
-    private int  compositionHeight;
 
      @Column(name = "composition_x", nullable = false)
     private int  compositionX;
@@ -48,5 +42,15 @@ public class NoteProjectComposition {
      @Column(name = "composition_z2", nullable = false)
     private int  compositionZ2;
 
+    @ManyToOne
+    @JoinColumn(name = "note_box_id", columnDefinition = "Long")
+    private NoteBox noteBox;
 
+    @ManyToOne
+    @JoinColumn(name = "note_image_box_list_id", columnDefinition = "Long")
+    private NoteImageBoxList noteImageBoxList;
+
+    @ManyToOne
+    @JoinColumn(name = "note_list_id", columnDefinition = "Long")
+    private NoteList noteList;
 }

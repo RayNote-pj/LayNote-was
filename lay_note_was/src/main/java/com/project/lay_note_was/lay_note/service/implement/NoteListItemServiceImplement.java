@@ -1,17 +1,12 @@
 package com.project.lay_note_was.lay_note.service.implement;
 
 import com.project.lay_note_was.lay_note.common.constant.ResponseMessage;
+import com.project.lay_note_was.lay_note.component.ProjectPermissionChecker;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
-import com.project.lay_note_was.lay_note.dto.note_list.NoteListItemDto;
 import com.project.lay_note_was.lay_note.dto.note_list.request.NoteListItemRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_list.response.NoteListItemResponseDto;
 import com.project.lay_note_was.lay_note.entity.note_list.NoteList;
 import com.project.lay_note_was.lay_note.entity.note_list_item.NoteListItem;
-import com.project.lay_note_was.lay_note.entity.note_project.NoteProject;
-import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteComponentType;
-import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
-import com.project.lay_note_was.lay_note.entity.note_project_user.NoteProjectUser;
-import com.project.lay_note_was.lay_note.entity.note_project_user.UserRole;
 import com.project.lay_note_was.lay_note.repository.*;
 import com.project.lay_note_was.lay_note.service.NoteListItemService;
 import lombok.RequiredArgsConstructor;
@@ -22,20 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class NoteListItemServiceImplement implements NoteListItemService {
     private final NoteListItemRepository noteListItemRepository;
-    private final NoteProjectUserRepository noteProjectUserRepository;
     private final NoteListRepository noteListRepository;
-    private final NoteProjectRepository noteProjectRepository;
-    private final NoteProjectCompositionRepository noteProjectCompositionRepository;
+    private final ProjectPermissionChecker projectPermissionChecker;
 
-    @Transactional
     @Override
+    @Transactional
     public ResponseDto<NoteListItemResponseDto> createNoteListItem(String userEmail, String noteProjectId, Long noteListId) {
         try {
-            NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
-            if(!(projectUser.getUserRole() == UserRole.OWNER || projectUser.getUserRole() == UserRole.MEMBER)) {
-                return ResponseDto.setFailed(ResponseMessage.NO_PERMISSION);
-            }
+            projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
+
             NoteList noteList = noteListRepository.findByNoteListId(noteListId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteList"));
             NoteListItem noteListItem = NoteListItem.builder()
@@ -43,10 +33,8 @@ public class NoteListItemServiceImplement implements NoteListItemService {
                     .noteListCheck(false)
                     .noteList(noteList)
                     .build();
-            NoteListItem saveNote = noteListItemRepository.save(noteListItem);
-
-            NoteListItemDto response = new NoteListItemDto(saveNote);
-            NoteListItemResponseDto data = new NoteListItemResponseDto(response);
+            NoteListItem note = noteListItemRepository.save(noteListItem);
+            NoteListItemResponseDto data = new NoteListItemResponseDto(note);
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (IllegalArgumentException e) {
@@ -57,24 +45,19 @@ public class NoteListItemServiceImplement implements NoteListItemService {
         }
     }
 
-    @Transactional
     @Override
-    public ResponseDto<NoteListItemResponseDto> updateNoteListItem(String userEmail, String noteProjectId, Long noteListId, Long noteListItemId, NoteListItemRequestDto dto) {
+    @Transactional
+    public ResponseDto<NoteListItemResponseDto> updateNoteListItem(String userEmail, String noteProjectId, Long noteListItemId, NoteListItemRequestDto dto) {
         try {
-            NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
-            if(!(projectUser.getUserRole() == UserRole.OWNER || projectUser.getUserRole() == UserRole.MEMBER)) {
-                return ResponseDto.setFailed(ResponseMessage.NO_PERMISSION);
-            }
+            projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
 
-            NoteListItem noteListItem = noteListItemRepository.findByNoteList_NoteListIdAndNoteListItemId(noteListId, noteListItemId)
+            NoteListItem noteListItem = noteListItemRepository.findByNoteListItemId(noteListItemId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteListItem"));
 
             noteListItem.setNoteListCheck(dto.isNoteListCheck());
             noteListItem.setNoteListContent(dto.getNoteListContent());
 
-            NoteListItemDto response = new NoteListItemDto(noteListItem);
-            NoteListItemResponseDto data = new NoteListItemResponseDto(response);
+            NoteListItemResponseDto data = new NoteListItemResponseDto(noteListItem);
 
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (IllegalArgumentException e) {
@@ -85,23 +68,38 @@ public class NoteListItemServiceImplement implements NoteListItemService {
         }
     }
 
-    @Transactional
     @Override
+    @Transactional
     public ResponseDto<Void> deleteNoteListItem(String userEmail, Long noteListItemId, String noteProjectId) {
         try {
-            NoteProjectUser projectUser = noteProjectUserRepository.findByUser_UserEmailAndNoteProject_NoteProjectId(userEmail, noteProjectId)
-                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_NOTE_PROJECT_MEMBER));
-            if(!(projectUser.getUserRole() == UserRole.OWNER || projectUser.getUserRole() == UserRole.MEMBER)) {
-                return ResponseDto.setFailed(ResponseMessage.NO_PERMISSION);
-            }
+            projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
 
-            NoteListItem noteListItem = noteListItemRepository.findByNoteProjectIdAndNoteListItemId(noteProjectId, noteListItemId, NoteComponentType.NOTELIST)
+            NoteListItem noteListItem = noteListItemRepository.findByNoteListItemId(noteListItemId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA));
 
             noteListItemRepository.delete(noteListItem);
             return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
         }  catch (IllegalArgumentException e) {
             return ResponseDto.setFailed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<NoteListItemResponseDto> updateCheck(String userEmail, String noteProjectId, Long noteListItemId, Boolean noteListCheck) {
+        try {
+            projectPermissionChecker.requireMemberOrOwner(userEmail, noteProjectId);
+
+            NoteListItem noteListItem = noteListItemRepository.findByNoteListItemId(noteListItemId)
+                    .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteListItem"));
+            noteListItem.setNoteListCheck(noteListCheck);
+
+            NoteListItemResponseDto data = new NoteListItemResponseDto(noteListItem);
+
+            return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);

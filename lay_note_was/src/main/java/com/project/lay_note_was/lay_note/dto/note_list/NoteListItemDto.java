@@ -14,13 +14,10 @@ public class NoteListItemDto {
     private Long noteListItemId;
     private String noteListContent;
     private boolean noteListCheck;
-    @JsonIgnore
-    private NoteList noteList;
 
     public NoteListItemDto(NoteListItem noteListItem) {
         this.noteListItemId = noteListItem.getNoteListItemId();
         this.noteListContent = noteListItem.getNoteListContent();
         this.noteListCheck = noteListItem.isNoteListCheck();
-        this.noteList = noteListItem.getNoteList();
     }
 }

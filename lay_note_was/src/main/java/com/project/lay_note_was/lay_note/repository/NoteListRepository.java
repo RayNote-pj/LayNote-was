@@ -28,5 +28,11 @@ public interface NoteListRepository extends JpaRepository<NoteList, Long> {
             @Param("noteComponentType")NoteComponentType noteComponentType
     );
 
+    @Query("""
+        SELECT nl FROM NoteList nl
+        JOIN nl.noteProjectCompositions npc
+        WHERE npc.noteComponentType = "NOTELIST"
+        AND nl.noteListId = :noteListId
+""")
     Optional<NoteList> findByNoteListId(Long noteListId);
 }

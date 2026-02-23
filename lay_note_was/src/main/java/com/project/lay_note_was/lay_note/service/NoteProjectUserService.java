@@ -9,4 +9,6 @@ public interface NoteProjectUserService {
     ResponseDto<NoteProjectUserListResponseDto> getProjectJoinUser(String userEmail, String noteProjectId);
 
     ResponseDto<NoteProjectUserResponseDto> changeUserRole(String userEmail, String memberEmail, UserRole userRole, String noteProjectId);
+
+    ResponseDto<Boolean> isMember(String userEmail, String noteProjectId);
 }

@@ -1,11 +1,13 @@
 package com.project.lay_note_was.lay_note.entity.note_image_box;
 
+import com.project.lay_note_was.lay_note.entity.note_project_composition.NoteProjectComposition;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,5 +24,8 @@ public class NoteImageBoxList {
     private Long noteImageBoxListId;
 
     @OneToMany(mappedBy = "noteImageBoxList", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NoteImageBox> noteImageBoxes;
+    private List<NoteImageBox> noteImageBoxes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "noteImageBoxList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteProjectComposition> noteProjectCompositions;
 }

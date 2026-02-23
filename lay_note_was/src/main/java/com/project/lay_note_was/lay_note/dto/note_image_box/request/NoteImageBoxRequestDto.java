@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NoteImageBoxRequestDto {
     private String imageCaption;
-    private String imageUrl;
 }

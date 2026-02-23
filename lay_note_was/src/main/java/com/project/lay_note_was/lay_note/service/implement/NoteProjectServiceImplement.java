@@ -3,8 +3,6 @@ package com.project.lay_note_was.lay_note.service.implement;
 import com.project.lay_note_was.lay_note.common.constant.ResponseMessage;
 import com.project.lay_note_was.lay_note.dto.ResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_project.NoteProjectDto;
-import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectCreateRequestDto;
-import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectImageRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project.request.NoteProjectUpdateRequestDto;
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectListResponseDto;
 import com.project.lay_note_was.lay_note.dto.note_project.response.NoteProjectResponseDto;
@@ -58,7 +56,17 @@ public class NoteProjectServiceImplement implements NoteProjectService {
     @Override
     public ResponseDto<NoteProjectResponseDto> getNoteProjectOne(String userEmail, String noteProjectId) {
         try {
-            NoteProject noteProject = noteProjectRepository.findByUser_UserEmailAndNoteProjectId(userEmail, noteProjectId).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+            NoteProject noteProject = noteProjectRepository.findByNoteProjectId(noteProjectId).orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+
+            boolean isMember = noteProjectUserRepository
+                    .existsByUser_UserEmailAndNoteProject_NoteProjectId(
+                            userEmail,
+                            noteProjectId
+                    );
+
+            if (!isMember) {
+                return ResponseDto.setFailed(ResponseMessage.NOT_NOTE_PROJECT_MEMBER);
+            }
 
             NoteProjectDto response = new NoteProjectDto(noteProject);
             NoteProjectResponseDto data = new NoteProjectResponseDto(response);
@@ -130,6 +138,9 @@ public class NoteProjectServiceImplement implements NoteProjectService {
         try{
             NoteProject noteProject = noteProjectRepository.findByUser_UserEmailAndNoteProjectId(userEmail, noteProjectId)
                     .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXIST_DATA + "noteProject"));
+            if (dto.getNoteProjectTitle().isEmpty()) {
+                return ResponseDto.setFailed("ProjectTitle can not empty");
+            }
             NoteProject saveData = noteProject.toBuilder()
                     .noteProjectTitle(dto.getNoteProjectTitle())
                     .updatedAt(LocalDateTime.now())

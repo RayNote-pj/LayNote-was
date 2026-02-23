@@ -10,17 +10,16 @@ import java.util.List;
 
 @Repository
 public interface NoteProjectPinRepository extends JpaRepository<NoteProjectPin, String> {
-    List<NoteProjectPin> findByUser_UserEmailOrderByNoteProject_UpdatedAtDesc(String userEmail);
 
     @Query("""
     select p
     from NoteProjectPin p
     join fetch p.noteProject
     where p.user.userEmail = :userEmail
+    AND p.noteProject.deletedAt IS NULL
     order by p.noteProject.updatedAt desc
 """)
     List<NoteProjectPin> findPinsWithProject(@Param("userEmail") String userEmail);
-
 
     NoteProjectPin findByPinId(String pinId);
 }

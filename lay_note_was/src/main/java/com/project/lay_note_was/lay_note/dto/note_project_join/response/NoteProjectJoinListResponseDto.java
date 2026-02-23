@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NoteProjectJoinListResponseDto {
-    private List<NoteProjectJoinDto> noteProjectJoinDto;
+    private List<NoteProjectJoinDto> noteProjectJoins;
 }

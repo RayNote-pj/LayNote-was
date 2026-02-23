@@ -14,7 +14,6 @@ public class NoteImageBoxListOneDto {
     private NoteImageBoxDto noteImageBoxDto;
 
     public NoteImageBoxListOneDto(NoteImageBoxDto response) {
-        this.noteImageBoxListId = response.getNoteImageBoxList().getNoteImageBoxListId();
         this.noteImageBoxDto = response;
     }
 }
